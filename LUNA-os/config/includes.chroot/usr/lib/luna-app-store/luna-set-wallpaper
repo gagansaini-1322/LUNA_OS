@@ -1,0 +1,22 @@
+#!/bin/sh
+# /usr/lib/luna-app-store/luna-set-wallpaper
+#
+# Called with a genre name; swaps the XFCE backdrop to match.
+# Falls back to the default Luna OS wallpaper for unknown genres.
+
+GENRE="$1"
+BG_DIR="/usr/share/backgrounds/luna"
+
+case "$GENRE" in
+    RPG)              FILE="rpg-fantasy.jpg" ;;
+    FPS)              FILE="fps-action.jpg" ;;
+    Racing)           FILE="racing.jpg" ;;
+    Strategy)         FILE="strategy.jpg" ;;
+    Platformer)       FILE="platformer.jpg" ;;
+    Retro/Emulation)  FILE="retro-emulation.jpg" ;;
+    *)                FILE="default-idle.jpg" ;;
+esac
+
+PROP_BASE="/backdrop/screen0/monitor0/workspace0/last-image"
+
+xfconf-query -c xfce4-desktop -p "$PROP_BASE" -s "$BG_DIR/$FILE" 2>/dev/null || true

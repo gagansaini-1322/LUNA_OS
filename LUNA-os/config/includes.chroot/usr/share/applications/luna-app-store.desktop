@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Luna App Store
+Comment=Install free, open-source games
+Exec=/usr/bin/luna-app-store
+Icon=applications-games
+Terminal=false
+Categories=Game;

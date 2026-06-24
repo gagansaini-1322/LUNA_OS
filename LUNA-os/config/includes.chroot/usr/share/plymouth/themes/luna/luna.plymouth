@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=Luna OS
+Description=Dark/neon gaming boot splash for Luna OS
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/luna
+ScriptFile=/usr/share/plymouth/themes/luna/luna.script

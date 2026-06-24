@@ -1,0 +1,39 @@
+# Luna OS — gaming package list
+# config/package-lists/gaming.list.chroot
+#
+# Lutris is included and presented to the user under its real name and
+# real branding — no rebranding/disguising of third-party software.
+# Lutris itself only launches games the user has legitimate access to;
+# Luna OS does not bundle or fake any purchase/account flow.
+
+## Game launcher (real Lutris, real branding)
+lutris
+
+## Performance daemons
+gamemode
+mangohud
+
+## Retro emulation (RetroArch + libretro cores)
+retroarch
+libretro-core-info
+retroarch-assets
+libretro-nestopia
+libretro-snes9x
+libretro-mednafen-psx
+libretro-mgba
+libretro-fbneo
+libretro-genesis-plus-gx
+libretro-mupen64plus-next
+
+## Windows compatibility layer (minimal Wine — not full Proton GE)
+wine64
+wine32:i386
+winetricks
+
+## Controller support
+xpad-dkms
+joystick
+jstest-gtk
+
+## Memory management
+zram-tools

@@ -1,0 +1,92 @@
+{
+  "games": [
+    {
+      "id": "0ad",
+      "name": "0 A.D.",
+      "genre": "Strategy",
+      "package": "0ad",
+      "size_mb": 1450,
+      "popularity": 9,
+      "added": "2024-01-01",
+      "description": "Free, open-source real-time strategy game set in ancient times. Build civilizations, manage economies, and command armies.",
+      "license": "GPL-2.0 / CC-BY-SA"
+    },
+    {
+      "id": "supertuxkart",
+      "name": "SuperTuxKart",
+      "genre": "Racing",
+      "package": "supertuxkart",
+      "size_mb": 950,
+      "popularity": 10,
+      "added": "2024-01-01",
+      "description": "Open-source kart racing game starring Tux and friends. Lightweight, controller-friendly, runs well on Intel iGPUs.",
+      "license": "GPL-3.0"
+    },
+    {
+      "id": "wesnoth",
+      "name": "Battle for Wesnoth",
+      "genre": "RPG",
+      "package": "wesnoth",
+      "size_mb": 800,
+      "popularity": 8,
+      "added": "2024-01-01",
+      "description": "Turn-based tactical RPG/strategy hybrid with a huge fantasy campaign library, entirely free and open source.",
+      "license": "GPL-2.0"
+    },
+    {
+      "id": "warzone2100",
+      "name": "Warzone 2100",
+      "genre": "Strategy",
+      "package": "warzone2100",
+      "size_mb": 650,
+      "popularity": 6,
+      "added": "2024-01-01",
+      "description": "Post-apocalyptic real-time strategy with base building, tech trees, and unit design. Fully open source.",
+      "license": "GPL-2.0"
+    },
+    {
+      "id": "xonotic",
+      "name": "Xonotic",
+      "genre": "FPS",
+      "package": "xonotic",
+      "size_mb": 1300,
+      "popularity": 9,
+      "added": "2024-01-01",
+      "description": "Fast-paced, free arena FPS built on the Darkplaces engine. Runs smoothly on low-end Intel hardware.",
+      "license": "GPL-2.0"
+    },
+    {
+      "id": "teeworlds",
+      "name": "Teeworlds",
+      "genre": "Platformer",
+      "package": "teeworlds",
+      "size_mb": 60,
+      "popularity": 7,
+      "added": "2024-01-01",
+      "description": "Tiny, fast 2D multiplayer shooter/platformer hybrid. Extremely lightweight — under 500 MB installed.",
+      "license": "GPL-3.0 / CC-BY-SA"
+    },
+    {
+      "id": "extremetuxracer",
+      "name": "Extreme Tux Racer",
+      "genre": "Racing",
+      "package": "extremetuxracer",
+      "size_mb": 180,
+      "popularity": 5,
+      "added": "2024-01-01",
+      "description": "Lightweight downhill racing game. Tux on a sled, classic arcade fun, minimal system requirements.",
+      "license": "GPL-2.0"
+    },
+    {
+      "id": "crawl",
+      "name": "Dungeon Crawl Stone Soup",
+      "genre": "RPG",
+      "package": "crawl",
+      "size_mb": 90,
+      "popularity": 7,
+      "added": "2024-01-01",
+      "description": "Classic roguelike dungeon crawler. Deep RPG mechanics in a tiny, terminal-friendly package.",
+      "license": "GPL-2.0"
+    }
+  ]
+}

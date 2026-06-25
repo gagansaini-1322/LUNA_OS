@@ -1,0 +1,15 @@
+#!/bin/sh
+# config/hooks/live/0016-install-winetricks.hook.chroot
+#
+# winetricks was removed from Debian Bookworm's repos. Install it directly
+# from upstream (https://github.com/Winetricks/winetricks) which is the
+# canonical, maintained source — same as the project recommends.
+
+set -e
+
+echo "[luna-hook] Installing winetricks from upstream..."
+curl -fsSL https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks \
+    -o /usr/local/bin/winetricks
+chmod +x /usr/local/bin/winetricks
+
+echo "[luna-hook] winetricks installed: $(winetricks --version 2>/dev/null || echo 'ok')"

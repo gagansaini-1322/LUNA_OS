@@ -11,8 +11,7 @@ live-config-systemd
 systemd-sysv
 linux-image-rt-amd64
 firmware-linux-free
-firmware-misc-nonfree
-firmware-iwlwifi
+firmware-linux-nonfree
 
 ## Desktop environment (minimal XFCE — no extras)
 xserver-xorg
@@ -36,7 +35,6 @@ alsa-utils
 network-manager
 network-manager-gnome
 wpasupplicant
-firmware-realtek
 
 ## File manager / terminal (single instances per spec)
 thunar

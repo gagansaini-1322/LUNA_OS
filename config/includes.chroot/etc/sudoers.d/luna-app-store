@@ -1,0 +1,7 @@
+# Luna OS — App Store install privilege
+# config/includes.chroot/etc/sudoers.d/luna-app-store
+#
+# Grants the luna user passwordless root ONLY for the catalog-validating
+# install helper. No general apt/root access is granted.
+
+luna ALL=(root) NOPASSWD: /usr/lib/luna-app-store/luna-install-game

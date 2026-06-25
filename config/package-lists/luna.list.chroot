@@ -1,0 +1,61 @@
+# Luna OS — base system package list
+# config/package-lists/luna.list.chroot
+#
+# Minimal base + XFCE4 (no full GNOME/KDE) + only what gaming needs.
+# Every line here must justify its RAM/disk cost.
+
+## Core base
+live-boot
+live-config
+live-config-systemd
+systemd-sysv
+linux-image-rt-amd64
+firmware-linux-free
+firmware-misc-nonfree
+firmware-iwlwifi
+
+## Desktop environment (minimal XFCE — no extras)
+xserver-xorg
+xserver-xorg-video-intel
+xserver-xorg-video-fbdev
+xfce4-session
+xfwm4
+xfdesktop4
+xfce4-panel
+lightdm
+lightdm-gtk-greeter
+plymouth
+plymouth-themes
+
+## Audio (needed for games)
+pulseaudio
+pulseaudio-utils
+alsa-utils
+
+## Networking (needed for game downloads / online play)
+network-manager
+network-manager-gnome
+wpasupplicant
+firmware-realtek
+
+## File manager / terminal (single instances per spec)
+thunar
+lxterminal
+
+## Python runtime (for App Store + Luna OS tooling)
+python3
+python3-gi
+python3-pip
+gir1.2-gtk-3.0
+
+## Flatpak (needed to install Lutris — not packaged in Debian's own repos)
+flatpak
+
+## Compression / persistence support
+squashfs-tools
+zram-tools
+
+## USB / input
+udev
+usbutils
+xserver-xorg-input-libinput

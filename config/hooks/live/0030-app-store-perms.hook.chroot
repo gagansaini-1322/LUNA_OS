@@ -1,0 +1,18 @@
+#!/bin/sh
+# config/hooks/live/0030-app-store-perms.hook.chroot
+#
+# The install helper must be root-owned and not group/world-writable,
+# and the sudoers fragment must be 0440 — sudo refuses to read
+# misconfigured sudoers.d files otherwise.
+
+set -e
+
+chmod 0755 /usr/lib/luna-app-store/luna-install-game
+chown root:root /usr/lib/luna-app-store/luna-install-game
+
+chmod 0440 /etc/sudoers.d/luna-app-store
+chown root:root /etc/sudoers.d/luna-app-store
+
+chmod 0755 /usr/bin/luna-app-store
+
+echo "[luna-hook] App Store permissions locked down."

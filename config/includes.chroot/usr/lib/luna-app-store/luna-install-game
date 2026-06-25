@@ -1,0 +1,46 @@
+#!/bin/sh
+# /usr/lib/luna-app-store/luna-install-game
+#
+# Runs as root (via a narrow sudoers NOPASSWD rule — see
+# /etc/sudoers.d/luna-app-store). This script is the ONLY thing that rule
+# permits, and it refuses to touch any package that isn't in the App
+# Store's own catalog. The GUI never gets raw root/apt access.
+
+set -e
+
+CATALOG="/usr/share/luna-app-store/catalog.json"
+ACTION="$1"   # "install" or "remove"
+PKG="$2"
+
+if [ -z "$ACTION" ] || [ -z "$PKG" ]; then
+    echo "usage: luna-install-game <install|remove> <package>" >&2
+    exit 1
+fi
+
+# Validate package name against the catalog (prevents arbitrary apt calls)
+if ! python3 - "$CATALOG" "$PKG" <<'PYEOF'
+import json, sys
+catalog_path, pkg = sys.argv[1], sys.argv[2]
+with open(catalog_path) as f:
+    data = json.load(f)
+valid = {g["package"] for g in data["games"]}
+sys.exit(0 if pkg in valid else 1)
+PYEOF
+then
+    echo "Refusing: '$PKG' is not in the Luna App Store catalog." >&2
+    exit 2
+fi
+
+case "$ACTION" in
+    install)
+        apt-get update -qq
+        apt-get install -y --no-install-recommends "$PKG"
+        ;;
+    remove)
+        apt-get remove -y "$PKG"
+        ;;
+    *)
+        echo "Unknown action: $ACTION" >&2
+        exit 1
+        ;;
+esac

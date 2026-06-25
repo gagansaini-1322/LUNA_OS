@@ -1,0 +1,106 @@
+name: Build Luna OS ISO
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      # Only trigger when build-relevant files change
+      - 'config/**'
+      - 'auto/**'
+      - '.github/workflows/build.yml'
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:   # allows manual trigger from the Actions tab
+
+jobs:
+  build:
+    runs-on: ubuntu-latest   # full VM — has /dev access live-build needs
+    timeout-minutes: 90      # ISOs with Wine + RetroArch can take a while
+
+    steps:
+      # ── 1. Checkout ────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── 2. Enable i386 arch (needed for wine32:i386) ───────────────────
+      - name: Enable i386 architecture
+        run: sudo dpkg --add-architecture i386
+
+      # ── 3. Cache apt package downloads ─────────────────────────────────
+      # Caches /var/cache/apt/archives between runs so Wine, RetroArch,
+      # firmware blobs etc. don't re-download every time.
+      - name: Cache apt packages
+        uses: actions/cache@v4
+        with:
+          path: /var/cache/apt/archives
+          # Cache key changes when package lists change
+          key: apt-${{ runner.os }}-${{ hashFiles('config/package-lists/**') }}
+          restore-keys: |
+            apt-${{ runner.os }}-
+
+      # ── 4. Install live-build ───────────────────────────────────────────
+      - name: Install live-build
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            live-build \
+            xorriso \
+            isolinux \
+            syslinux-common
+
+      # ── 5. Restore cached apt archives into live-build's cache dir ─────
+      # live-build keeps its own apt cache under cache/packages.*
+      # Pre-seeding it with our GitHub cache skips re-downloading packages
+      # that haven't changed since the last build.
+      - name: Pre-seed live-build package cache
+        run: |
+          sudo mkdir -p cache/packages.chroot
+          sudo cp /var/cache/apt/archives/*.deb cache/packages.chroot/ 2>/dev/null || true
+
+      # ── 6. Run lb config ───────────────────────────────────────────────
+      - name: Configure build
+        run: sudo bash auto/config
+
+      # ── 7. Build the ISO ───────────────────────────────────────────────
+      - name: Build Luna OS ISO
+        run: sudo lb build 2>&1 | tee build.log
+        env:
+          DEBIAN_FRONTEND: noninteractive
+
+      # ── 8. Save build log always (even on failure) ─────────────────────
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log-${{ github.run_number }}
+          path: build.log
+          retention-days: 14
+
+      # ── 9. Rename ISO with version/date stamp ──────────────────────────
+      - name: Rename ISO
+        if: success()
+        run: |
+          ISO=$(ls *.iso 2>/dev/null | head -1)
+          if [ -n "$ISO" ]; then
+            DATE=$(date +%Y%m%d)
+            SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+            mv "$ISO" "luna-os-${DATE}-${SHORT_SHA}.iso"
+            echo "ISO_NAME=luna-os-${DATE}-${SHORT_SHA}.iso" >> $GITHUB_ENV
+          fi
+
+      # ── 10. Upload ISO as artifact ─────────────────────────────────────
+      - name: Upload Luna OS ISO
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ISO_NAME }}
+          path: "*.iso"
+          retention-days: 30   # keep ISOs for 30 days
+
+      # ── 11. Save built .deb files back to cache ─────────────────────────
+      # After a successful build, copy newly downloaded debs back so the
+      # next run's cache restore has them.
+      - name: Update apt cache
+        if: success()
+        run: |
+          sudo cp cache/packages.chroot/*.deb /var/cache/apt/archives/ 2>/dev/null || true

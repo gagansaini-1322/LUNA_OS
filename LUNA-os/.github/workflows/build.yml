@@ -17,13 +17,6 @@ jobs:
       - name: Enable i386 architecture
         run: sudo dpkg --add-architecture i386
 
-      - name: Cache apt packages
-        uses: actions/cache@v4
-        with:
-          path: /var/cache/apt/archives
-          key: apt-${{ runner.os }}-${{ hashFiles('LUNA-os/config/package-lists/**') }}
-          restore-keys: apt-${{ runner.os }}-
-
       - name: Install live-build
         run: |
           sudo apt-get update -qq
@@ -47,15 +40,6 @@ jobs:
           name: build-log-${{ github.run_number }}
           path: LUNA-os/build.log
           retention-days: 14
-
-      - name: Rename and upload ISO
-        if: success()
-        working-directory: LUNA-os
-        run: |
-          ISO=$(ls *.iso 2>/dev/null | head -1)
-          DATE=$(date +%Y%m%d)
-          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
-          mv "$ISO" "luna-os-${DATE}-${SHORT_SHA}.iso"
 
       - name: Upload Luna OS ISO
         if: success()

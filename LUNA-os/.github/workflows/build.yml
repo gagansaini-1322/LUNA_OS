@@ -14,6 +14,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Debug - show directory structure
+        run: |
+          echo "=== ROOT ==="
+          ls -la
+          echo "=== LUNA-os ==="
+          ls -la LUNA-os/ 2>/dev/null || echo "NO LUNA-os DIR"
+          echo "=== LUNA-os/auto ==="
+          ls -la LUNA-os/auto/ 2>/dev/null || echo "NO auto DIR"
+
       - name: Enable i386 architecture
         run: sudo dpkg --add-architecture i386
 
@@ -25,12 +34,9 @@ jobs:
 
       - name: Configure build
         run: sudo bash LUNA-os/auto/config
-        working-directory: LUNA-os
 
       - name: Build Luna OS ISO
-        run: |
-          cd LUNA-os
-          sudo lb build 2>&1 | tee build.log
+        run: cd LUNA-os && sudo lb build 2>&1 | tee build.log
         env:
           DEBIAN_FRONTEND: noninteractive
 

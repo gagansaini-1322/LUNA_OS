@@ -24,12 +24,13 @@ jobs:
             live-build xorriso isolinux syslinux-common
 
       - name: Configure build
+        run: sudo bash LUNA-os/auto/config
         working-directory: LUNA-os
-        run: sudo bash auto/config
 
       - name: Build Luna OS ISO
-        working-directory: LUNA-os
-        run: sudo lb build 2>&1 | tee build.log
+        run: |
+          cd LUNA-os
+          sudo lb build 2>&1 | tee build.log
         env:
           DEBIAN_FRONTEND: noninteractive
 

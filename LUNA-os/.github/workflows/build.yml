@@ -3,19 +3,12 @@ name: Build Luna OS ISO
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'LUNA-os/config/**'
-      - 'LUNA-os/auto/**'
-      - 'LUNA-os/.github/workflows/build.yml'
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 90
-    defaults:
-      run:
-        working-directory: LUNA-os
 
     steps:
       - name: Checkout repository
@@ -37,15 +30,12 @@ jobs:
           sudo apt-get install -y --no-install-recommends \
             live-build xorriso isolinux syslinux-common
 
-      - name: Pre-seed live-build package cache
-        run: |
-          sudo mkdir -p cache/packages.chroot
-          sudo cp /var/cache/apt/archives/*.deb cache/packages.chroot/ 2>/dev/null || true
-
       - name: Configure build
+        working-directory: LUNA-os
         run: sudo bash auto/config
 
       - name: Build Luna OS ISO
+        working-directory: LUNA-os
         run: sudo lb build 2>&1 | tee build.log
         env:
           DEBIAN_FRONTEND: noninteractive
@@ -58,26 +48,19 @@ jobs:
           path: LUNA-os/build.log
           retention-days: 14
 
-      - name: Rename ISO
+      - name: Rename and upload ISO
         if: success()
+        working-directory: LUNA-os
         run: |
           ISO=$(ls *.iso 2>/dev/null | head -1)
-          if [ -n "$ISO" ]; then
-            DATE=$(date +%Y%m%d)
-            SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
-            mv "$ISO" "luna-os-${DATE}-${SHORT_SHA}.iso"
-            echo "ISO_NAME=luna-os-${DATE}-${SHORT_SHA}.iso" >> $GITHUB_ENV
-          fi
+          DATE=$(date +%Y%m%d)
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          mv "$ISO" "luna-os-${DATE}-${SHORT_SHA}.iso"
 
       - name: Upload Luna OS ISO
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.ISO_NAME }}
+          name: luna-os-iso
           path: LUNA-os/*.iso
           retention-days: 30
-
-      - name: Update apt cache
-        if: success()
-        run: |
-          sudo cp cache/packages.chroot/*.deb /var/cache/apt/archives/ 2>/dev/null || true

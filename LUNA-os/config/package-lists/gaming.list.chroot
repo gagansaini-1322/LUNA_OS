@@ -1,0 +1,30 @@
+# Luna OS — gaming package list
+# config/package-lists/gaming.list.chroot
+#
+# Lutris is NOT in Debian's own repos, so it's installed via Flatpak
+# (Flathub) by a build hook instead — still under its real name/branding,
+# no rebranding/disguising of third-party software.
+
+## Performance daemons
+gamemode
+mangohud
+
+## Retro emulation (RetroArch + libretro cores actually packaged in Debian)
+retroarch
+libretro-core-info
+retroarch-assets
+libretro-nestopia
+libretro-mgba
+libretro-beetle-psx
+
+## Windows compatibility layer (minimal Wine — not full Proton GE)
+wine64
+wine32:i386
+
+## Controller support (xpad is already in-kernel; no separate dkms package
+## needed — these just add userspace joystick test/config tools)
+joystick
+jstest-gtk
+
+## Memory management
+zram-tools

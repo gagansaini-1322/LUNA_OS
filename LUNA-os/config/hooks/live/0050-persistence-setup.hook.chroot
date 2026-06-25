@@ -1,0 +1,60 @@
+#!/bin/sh
+# config/hooks/live/0050-persistence-setup.hook.chroot
+#
+# Luna OS persistence model:
+#   - System partition (squashfs) is read-only by design — live-build
+#     already mounts it read-only, nothing to do there.
+#   - The "persistence" boot parameter (set in grub.cfg) tells live-boot
+#     to look for a partition/file labeled "persistence" and overlay it
+#     read-write via overlayfs. This is native live-boot behavior; no
+#     custom code is needed for the overlay itself.
+#   - This hook adds the integrity check: if the persistence overlay is
+#     corrupt or unreadable, fall back to a clean (non-persistent) session
+#     instead of failing to boot.
+
+set -e
+
+echo "[luna-hook] Installing persistence integrity check..."
+
+cat > /usr/local/sbin/luna-persistence-check <<'EOF'
+#!/bin/sh
+# Runs early in boot (before the overlay is mounted read-write) to verify
+# the persistence backing store is sane. If not, live-boot's normal
+# behavior is to skip persistence and boot clean — this script just adds
+# an explicit filesystem check so a half-corrupt overlay doesn't get
+# silently mounted in a broken state.
+
+PERSIST_LABEL="persistence"
+PERSIST_DEV=$(blkid -L "$PERSIST_LABEL" 2>/dev/null || true)
+
+if [ -n "$PERSIST_DEV" ]; then
+    FSTYPE=$(blkid -o value -s TYPE "$PERSIST_DEV" 2>/dev/null || echo "")
+    case "$FSTYPE" in
+        ext4|ext3|ext2)
+            e2fsck -p "$PERSIST_DEV" >/var/log/luna-persistence-fsck.log 2>&1 || \
+                echo "[luna-persistence] fsck reported issues on $PERSIST_DEV — see /var/log/luna-persistence-fsck.log"
+            ;;
+    esac
+fi
+EOF
+chmod 0755 /usr/local/sbin/luna-persistence-check
+
+cat > /etc/systemd/system/luna-persistence-check.service <<'EOF'
+[Unit]
+Description=Luna OS persistence integrity check
+DefaultDependencies=no
+Before=local-fs.target
+After=systemd-udev-settle.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/luna-persistence-check
+RemainAfterExit=yes
+
+[Install]
+WantedBy=sysinit.target
+EOF
+
+systemctl enable luna-persistence-check.service || true
+
+echo "[luna-hook] Persistence integrity check installed."

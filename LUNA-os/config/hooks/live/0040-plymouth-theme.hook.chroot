@@ -1,0 +1,14 @@
+#!/bin/sh
+# config/hooks/live/0040-plymouth-theme.hook.chroot
+
+set -e
+
+echo "[luna-hook] Registering Luna Plymouth theme..."
+update-alternatives --install /usr/share/plymouth/themes/default.plymouth \
+    default.plymouth /usr/share/plymouth/themes/luna/luna.plymouth 100
+
+update-alternatives --set default.plymouth /usr/share/plymouth/themes/luna/luna.plymouth
+
+plymouth-set-default-theme -R luna || update-initramfs -u
+
+echo "[luna-hook] Plymouth theme set."

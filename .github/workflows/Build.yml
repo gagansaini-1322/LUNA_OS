@@ -44,11 +44,12 @@ jobs:
         if: success()
         run: |
           ISO=$(find LUNA-os -name "*.iso" | head -1)
-          echo "Checking available grub files:"
-          find /usr/lib/grub/i386-pc/ -name "*.img" | head -10
-          HYBRID=$(find /usr/lib/grub/i386-pc/ -name "boot_hybrid.img" 2>/dev/null || find /usr/lib/grub/ -name "boot_hybrid.img" 2>/dev/null | head -1)
-          CDBOOT=$(find /usr/lib/grub/i386-pc/ -name "cdboot.img" 2>/dev/null | head -1)
-          echo "hybrid: $HYBRID cdboot: $CDBOOT"
+          sudo xorriso -indev "$ISO" -outdev "$ISO.new" \
+            -boot_image grub grub2_mbr=/usr/lib/grub/i386-pc/boot_hybrid.img \
+            -boot_image any next \
+            -boot_image any partition_table=on \
+            --
+          mv "$ISO.new" "$ISO"
           xxd "$ISO" | head -3
 
       - name: Upload build log

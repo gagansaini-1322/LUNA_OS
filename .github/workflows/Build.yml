@@ -19,6 +19,11 @@ jobs:
             live-build xorriso isolinux syslinux-common \
             grub-pc-bin grub-efi-amd64-bin
 
+      - name: Patch grub-mkimage in lb_binary_iso
+        run: |
+          sudo sed -i "172s|grub-mkimage -d|grub-mkimage -p /boot/grub -d|" /usr/lib/live/build/lb_binary_iso
+          grep -n grub-mkimage /usr/lib/live/build/lb_binary_iso
+
       - name: Patch lb_chroot_linux-image
         run: |
           SCRIPT=$(dpkg -L live-build | grep "lb_chroot_linux-image$")

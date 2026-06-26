@@ -48,7 +48,8 @@ jobs:
             -boot_image grub grub2_mbr=/usr/lib/grub/i386-pc/boot_hybrid.img \
             -boot_image any next \
             -boot_image any partition_table=on \
-            --
+            -changes_pending yes \
+            -commit
           mv "$ISO.new" "$ISO"
           xxd "$ISO" | head -3
 

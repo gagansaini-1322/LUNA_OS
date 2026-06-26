@@ -1,27 +1,7 @@
 #!/bin/sh
 set -e
 
-lb config noauto \
-    --architectures amd64 \
-    --distribution bookworm \
-    --binary-images iso-hybrid \
-    --archive-areas "main contrib non-free non-free-firmware" \
-    --mirror-bootstrap "http://deb.debian.org/debian" \
-    --mirror-chroot "http://deb.debian.org/debian" \
-    --mirror-binary "http://deb.debian.org/debian" \
-    --mirror-binary-security "http://deb.debian.org/debian-security" \
-    --security false \
-    --bootloader "grub-efi" \
-    --bootappend-live "boot=live components persistence splash quiet" \
-    --iso-application "Luna OS" \
-    --iso-publisher "Luna OS Project" \
-    --iso-volume "LUNA-OS" \
-    --memtest none \
-    --win32-loader false \
-    --apt-recommends false \
-    --apt-source-archives false \
-    --cache-packages false \
-    "${@}"
+lb config noauto     --architectures amd64     --distribution bookworm     --binary-images iso-hybrid     --archive-areas "main contrib non-free non-free-firmware"     --mirror-bootstrap "http://deb.debian.org/debian"     --mirror-chroot "http://deb.debian.org/debian"     --mirror-binary "http://deb.debian.org/debian"     --mirror-binary-security "http://deb.debian.org/debian-security"     --security false     --bootloaders "grub-pc grub-efi"     --bootappend-live "boot=live components persistence splash quiet"     --iso-application "Luna OS"     --iso-publisher "Luna OS Project"     --iso-volume "LUNA-OS"     --memtest none     --win32-loader false     --apt-recommends false     --apt-source-archives false     --cache-packages false     "${@}"
 
 sed -i "s|^LB_LINUX_FLAVOURS_WITH_ARCH=.*|LB_LINUX_FLAVOURS_WITH_ARCH=""|" config/chroot
 sed -i "s|^LB_LINUX_PACKAGES=.*|LB_LINUX_PACKAGES=""|" config/chroot

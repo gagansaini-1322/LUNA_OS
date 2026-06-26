@@ -11,27 +11,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Enable i386 architecture
-        run: sudo dpkg --add-architecture i386
-
-      - name: Install live-build
+      - name: Install dependencies
         run: |
+          sudo dpkg --add-architecture i386
           sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends \
-            live-build xorriso isolinux syslinux-common syslinux-utils \
-            grub-pc-bin grub-efi-amd64-bin
+          sudo apt-get install -y --no-install-recommends             live-build xorriso isolinux syslinux-common             grub-pc-bin grub-efi-amd64-bin ovmf
 
       - name: Patch lb_chroot_linux-image
         run: |
           SCRIPT=$(dpkg -L live-build | grep "lb_chroot_linux-image$")
-          sudo sed -i '/dists.*Contents/{ s/.*/true/; }' "$SCRIPT"
+          sudo sed -i "/dists.*Contents/{ s/.*/true/; }" "$SCRIPT"
 
-      - name: Patch isohybrid out of live-build
-        run: |
-          sudo find /usr/lib/live/build/ -type f | xargs sudo grep -l "isohybrid" | \
-            xargs -I{} sudo sed -i 's/isohybrid/true/g' {}
-
-      - name: Configure and build Luna OS ISO
+      - name: Build Luna OS ISO
         run: |
           cd LUNA-os
           sudo lb clean --all
@@ -39,8 +30,6 @@ jobs:
           sudo lb build 2>&1 | tee build.log
         env:
           DEBIAN_FRONTEND: noninteractive
-
-
 
       - name: Upload build log
         if: always()

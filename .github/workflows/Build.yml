@@ -21,11 +21,6 @@ jobs:
         run: |
           SCRIPT=$(dpkg -L live-build | grep "lb_chroot_linux-image$")
           sudo sed -i '/dists.*Contents/{ s/.*/true/; }' "$SCRIPT"
-      - name: Patch isohybrid - DISABLED
-        run: |
-          sudo grep -rl "isohybrid" /usr/lib/live/build/ | while read f; do
-            sudo sed -i 's/isohybrid/true/g' "$f"
-          done
       - name: Configure and build Luna OS ISO
         run: |
           cd LUNA-os

@@ -17,6 +17,7 @@ lb config noauto \
     --mirror-chroot-security "http://deb.debian.org/debian-security" \
     --mirror-binary "http://deb.debian.org/debian" \
     --mirror-binary-security "http://deb.debian.org/debian-security" \
+    --security false \
     "$BOOTLOADER_OPT" "grub-pc grub-efi" \
     --bootappend-live "boot=live components persistence splash quiet" \
     --iso-application "Luna OS" \

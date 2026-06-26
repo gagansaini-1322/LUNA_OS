@@ -40,12 +40,15 @@ jobs:
         env:
           DEBIAN_FRONTEND: noninteractive
 
-      - name: Inject GRUB MBR into ISO
+      - name: Make ISO bootable with xorriso
         if: success()
         run: |
           ISO=$(find LUNA-os -name "*.iso" | head -1)
-          sudo dd if=/usr/lib/grub/i386-pc/boot.img of="$ISO" bs=1 count=446 conv=notrunc
-          echo "MBR injected into $ISO"
+          sudo xorriso -indev "$ISO" -outdev "$ISO.new" \
+            -boot_image grub grub2_mbr=/usr/lib/grub/i386-pc/boot_hybrid.img \
+            -boot_image any next \
+            -boot_image any partition_table=on \
+            -- 2>/dev/null && mv "$ISO.new" "$ISO" || echo "xorriso failed, keeping original"
           xxd "$ISO" | head -3
 
       - name: Upload build log

@@ -1,23 +1,17 @@
 #!/bin/sh
 set -e
 
-if lb config --help 2>&1 | grep -q -- '--bootloaders'; then
-    BOOTLOADER_OPT="--bootloaders"
-else
-    BOOTLOADER_OPT="--bootloader"
-fi
-
 lb config noauto \
     --architectures amd64 \
     --distribution bookworm \
-    --binary-images iso --bootloaders grub-efi \
+    --binary-images iso-hybrid \
     --archive-areas "main contrib non-free non-free-firmware" \
     --mirror-bootstrap "http://deb.debian.org/debian" \
     --mirror-chroot "http://deb.debian.org/debian" \
     --mirror-binary "http://deb.debian.org/debian" \
     --mirror-binary-security "http://deb.debian.org/debian-security" \
     --security false \
-    "$BOOTLOADER_OPT" "grub-pc grub-efi" \
+    --bootloader "grub-pc" \
     --bootappend-live "boot=live components persistence splash quiet" \
     --iso-application "Luna OS" \
     --iso-publisher "Luna OS Project" \
@@ -29,6 +23,5 @@ lb config noauto \
     --cache-packages false \
     "${@}"
 
-# Clear kernel package management — kernel is in package-lists instead
 sed -i 's|^LB_LINUX_FLAVOURS_WITH_ARCH=.*|LB_LINUX_FLAVOURS_WITH_ARCH=""|' config/chroot
 sed -i 's|^LB_LINUX_PACKAGES=.*|LB_LINUX_PACKAGES=""|' config/chroot

@@ -10,19 +10,26 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
       - name: Enable i386 architecture
         run: sudo dpkg --add-architecture i386
+
       - name: Install live-build
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends \
-            live-build xorriso isolinux syslinux-common syslinux-utils grub-pc-bin grub-efi-amd64-bin
+            live-build xorriso isolinux syslinux-common syslinux-utils \
+            grub-pc-bin grub-efi-amd64-bin
+
       - name: Patch lb_chroot_linux-image
         run: |
           SCRIPT=$(dpkg -L live-build | grep "lb_chroot_linux-image$")
           sudo sed -i '/dists.*Contents/{ s/.*/true/; }' "$SCRIPT"
-      - name: Make isohybrid available system-wide
-        run: sudo ln -sf $(which isohybrid) /usr/local/sbin/isohybrid 2>/dev/null || true
+
+      - name: Patch isohybrid out of live-build
+        run: |
+          sudo find /usr/lib/live/build/ -type f | xargs sudo grep -l "isohybrid" | \
+            xargs -I{} sudo sed -i 's/isohybrid/true/g' {}
 
       - name: Configure and build Luna OS ISO
         run: |
@@ -32,6 +39,15 @@ jobs:
           sudo lb build 2>&1 | tee build.log
         env:
           DEBIAN_FRONTEND: noninteractive
+
+      - name: Inject GRUB MBR into ISO
+        if: success()
+        run: |
+          ISO=$(find LUNA-os -name "*.iso" | head -1)
+          sudo dd if=/usr/lib/grub/i386-pc/boot.img of="$ISO" bs=1 count=446 conv=notrunc
+          echo "MBR injected into $ISO"
+          xxd "$ISO" | head -3
+
       - name: Upload build log
         if: always()
         uses: actions/upload-artifact@v4
@@ -39,6 +55,7 @@ jobs:
           name: build-log-${{ github.run_number }}
           path: LUNA-os/build.log
           retention-days: 14
+
       - name: Upload Luna OS ISO
         if: success()
         uses: actions/upload-artifact@v4
@@ -46,11 +63,3 @@ jobs:
           name: luna-os-iso
           path: LUNA-os/*.iso
           retention-days: 30
-      - name: Make ISO hybrid bootable with xorriso
-        if: success()
-        run: |
-          xorriso -indev LUNA-os/binary.hybrid.iso \
-            -outdev LUNA-os/binary.hybrid.iso \
-            -map LUNA-os/binary.hybrid.iso / \
-            -boot_image grub grub2_mbr=/usr/lib/grub/i386-pc/boot_hybrid.img \
-            -changes_pending yes 2>/dev/null || true

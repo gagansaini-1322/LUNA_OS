@@ -60,4 +60,3 @@ xserver-xorg-input-libinput
 grub-pc
 grub-pc-bin
 grub-efi-amd64-bin
-syslinux-utils

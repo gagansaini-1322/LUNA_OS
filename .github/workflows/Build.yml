@@ -1,49 +1,31 @@
 name: Build Luna OS ISO
-
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
-
 jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 90
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Enable i386 architecture
         run: sudo dpkg --add-architecture i386
-
       - name: Install live-build
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends \
             live-build xorriso isolinux syslinux-common syslinux-utils
-
       - name: Patch lb_chroot_linux-image
         run: |
           SCRIPT=$(dpkg -L live-build | grep "lb_chroot_linux-image$")
-          echo "Found script: $SCRIPT"
-          cat "$SCRIPT"
-          # Replace the wget line that fetches Contents with true (no-op)
           sudo sed -i '/dists.*Contents/{ s/.*/true/; }' "$SCRIPT"
-          echo "--- Patched script ---"
-          cat "$SCRIPT"
-
-      - name: Patch isohybrid in binary.sh
+      - name: Patch isohybrid in live-build scripts
         run: |
-          SCRIPT=$(dpkg -L live-build | grep "binary.sh$" | head -1)
-          sudo sed -i "s/isohybrid/true/g" "$SCRIPT"
-      - name: Patch isohybrid in binary.sh
-        run: |
-          find /usr/lib/live/build/ | xargs grep -l isohybrid 2>/dev/null || true
-          dpkg -L live-build | grep -i binary || true
-      - name: Patch isohybrid in binary.sh
-        run: |
-          sudo sed -i "s/isohybrid/true/g" /usr/lib/live/build/binary_iso
+          sudo grep -rl "isohybrid" /usr/lib/live/build/ | while read f; do
+            sudo sed -i 's/isohybrid/true/g' "$f"
+          done
       - name: Configure and build Luna OS ISO
         run: |
           cd LUNA-os
@@ -52,7 +34,6 @@ jobs:
           sudo lb build 2>&1 | tee build.log
         env:
           DEBIAN_FRONTEND: noninteractive
-
       - name: Upload build log
         if: always()
         uses: actions/upload-artifact@v4
@@ -60,7 +41,6 @@ jobs:
           name: build-log-${{ github.run_number }}
           path: LUNA-os/build.log
           retention-days: 14
-
       - name: Upload Luna OS ISO
         if: success()
         uses: actions/upload-artifact@v4

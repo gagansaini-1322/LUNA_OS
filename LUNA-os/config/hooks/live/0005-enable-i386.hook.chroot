@@ -2,4 +2,4 @@
 set -e
 echo "[luna-hook] Enabling i386 architecture..."
 dpkg --add-architecture i386
-apt-get update
+apt-get update -qq

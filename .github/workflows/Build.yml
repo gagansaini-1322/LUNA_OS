@@ -37,6 +37,10 @@ jobs:
         run: |
           SCRIPT=$(dpkg -L live-build | grep "binary.sh$" | head -1)
           sudo sed -i "s/isohybrid/true/g" "$SCRIPT"
+      - name: Patch isohybrid in binary.sh
+        run: |
+          find /usr/lib/live/build/ | xargs grep -l isohybrid 2>/dev/null || true
+          dpkg -L live-build | grep -i binary || true
       - name: Configure and build Luna OS ISO
         run: |
           cd LUNA-os

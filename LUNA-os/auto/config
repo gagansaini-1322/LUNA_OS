@@ -11,7 +11,7 @@ lb config noauto \
     --mirror-binary "http://deb.debian.org/debian" \
     --mirror-binary-security "http://deb.debian.org/debian-security" \
     --security false \
-    --bootloader "grub-pc" \
+    --bootloader "grub-efi" \
     --bootappend-live "boot=live components persistence splash quiet" \
     --iso-application "Luna OS" \
     --iso-publisher "Luna OS Project" \
@@ -23,5 +23,5 @@ lb config noauto \
     --cache-packages false \
     "${@}"
 
-sed -i 's|^LB_LINUX_FLAVOURS_WITH_ARCH=.*|LB_LINUX_FLAVOURS_WITH_ARCH=""|' config/chroot
-sed -i 's|^LB_LINUX_PACKAGES=.*|LB_LINUX_PACKAGES=""|' config/chroot
+sed -i "s|^LB_LINUX_FLAVOURS_WITH_ARCH=.*|LB_LINUX_FLAVOURS_WITH_ARCH=""|" config/chroot
+sed -i "s|^LB_LINUX_PACKAGES=.*|LB_LINUX_PACKAGES=""|" config/chroot

@@ -4,7 +4,7 @@ set -e
 lb config noauto \
     --architectures amd64 \
     --distribution bookworm \
-    --binary-images iso-hybrid \
+    --binary-images iso \
     --archive-areas "main contrib non-free non-free-firmware" \
     --mirror-bootstrap "http://deb.debian.org/debian" \
     --mirror-chroot "http://deb.debian.org/debian" \

@@ -33,6 +33,10 @@ jobs:
           echo "--- Patched script ---"
           cat "$SCRIPT"
 
+      - name: Patch isohybrid in binary.sh
+        run: |
+          SCRIPT=$(dpkg -L live-build | grep "binary.sh$" | head -1)
+          sudo sed -i "s/isohybrid/true/g" "$SCRIPT"
       - name: Configure and build Luna OS ISO
         run: |
           cd LUNA-os

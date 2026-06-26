@@ -11,7 +11,7 @@ lb config noauto \
     --mirror-binary "http://deb.debian.org/debian" \
     --mirror-binary-security "http://deb.debian.org/debian-security" \
     --security false \
-    --bootloader "grub-pc" \
+    --bootloader "grub2" \
     --bootappend-live "boot=live components persistence splash quiet" \
     --iso-application "Luna OS" \
     --iso-publisher "Luna OS Project" \

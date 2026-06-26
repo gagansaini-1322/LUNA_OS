@@ -15,12 +15,14 @@ jobs:
         run: |
           sudo dpkg --add-architecture i386
           sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends             live-build xorriso isolinux syslinux-common             grub-pc-bin grub-efi-amd64-bin ovmf
+          sudo apt-get install -y --no-install-recommends \
+            live-build xorriso isolinux syslinux-common \
+            grub-pc-bin grub-efi-amd64-bin
 
       - name: Patch lb_chroot_linux-image
         run: |
           SCRIPT=$(dpkg -L live-build | grep "lb_chroot_linux-image$")
-          sudo sed -i "/dists.*Contents/{ s/.*/true/; }" "$SCRIPT"
+          sudo sed -i '/dists.*Contents/{ s/.*/true/; }' "$SCRIPT"
 
       - name: Build Luna OS ISO
         run: |

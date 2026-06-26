@@ -1,76 +1,16 @@
-// Luna OS Plymouth boot theme
-// Dark/neon aesthetic, script-driven animation (no frame sequences —
-// keeps total theme size under 200 KB instead of multi-MB frame sets).
-
-Window.SetBackgroundTopColor(0.02, 0.02, 0.05);
-Window.SetBackgroundBottomColor(0.06, 0.05, 0.10);
-
-screen_width  = Window.GetWidth();
+wallpaper_image = Image("00.png");
+screen_width = Window.GetWidth();
 screen_height = Window.GetHeight();
 
-// --- Background particle field ---
-bg.image  = Image("background.png");
-bg.sprite = Sprite(bg.image.Scale(screen_width, screen_height));
-bg.sprite.SetX(0);
-bg.sprite.SetY(0);
-bg.sprite.SetZ(-100);
+frames = 14;
+frame_names = ["00.png","09.png","18.png","27.png","36.png","45.png","54.png","63.png","72.png","81.png","90.png","99.png","108.png","117.png"];
 
-// --- Centered glowing logo ---
-logo.image  = Image("logo.png");
-logo.sprite = Sprite(logo.image);
-logo.sprite.SetX(screen_width / 2 - logo.image.GetWidth() / 2);
-logo.sprite.SetY(screen_height / 2 - logo.image.GetHeight() / 2 - 30);
-logo.sprite.SetZ(10);
-
-// --- Progress bar track + fill (simple rectangles, no images needed) ---
-bar_width  = screen_width * 0.28;
-bar_height = 4;
-bar_x = screen_width / 2 - bar_width / 2;
-bar_y = screen_height / 2 + 90;
-
-track.image  = Image.Text("", 1, 1, 1, 0); // placeholder, replaced below
-fill_color_r = 0.16; fill_color_g = 0.70; fill_color_b = 1.0;
-
-progress_track = Rectangle(bar_width, bar_height, 0.15, 0.15, 0.20, 1);
-progress_track.SetX(bar_x);
-progress_track.SetY(bar_y);
-progress_track.SetZ(5);
-
-progress_fill = Rectangle(1, bar_height, fill_color_r, fill_color_g, fill_color_b, 1);
-progress_fill.SetX(bar_x);
-progress_fill.SetY(bar_y);
-progress_fill.SetZ(6);
-
-global.progress = 0;
-global.pulse_t = 0;
-
-fn refresh_callback() {
-    // gentle pulse on the logo glow (sine wave opacity)
-    global.pulse_t += 0.05;
-    pulse = 0.75 + 0.25 * Math.Sin(global.pulse_t);
-    logo.sprite.SetOpacity(pulse);
-
-    // grow the progress fill toward current boot progress
-    target_width = bar_width * global.progress;
-    progress_fill.SetWidth(target_width);
+fun refresh_callback() {
+    frame = Math.Int(Plymouth.GetBootProgress() * (frames - 1));
+    img = Image(frame_names[frame]);
+    sprite = Sprite(img);
+    sprite.SetX(screen_width / 2 - img.GetWidth() / 2);
+    sprite.SetY(screen_height / 2 - img.GetHeight() / 2);
 }
 
 Plymouth.SetRefreshFunction(refresh_callback);
-
-fn boot_progress_callback(duration, progress) {
-    global.progress = progress;
-}
-Plymouth.SetBootProgressFunction(boot_progress_callback);
-
-fn quit_callback() {
-    // fade everything out on handoff to the display manager
-    logo.sprite.SetOpacity(0);
-    bg.sprite.SetOpacity(0);
-}
-Plymouth.SetQuitFunction(quit_callback);
-
-fn display_password_callback(prompt, bullets) {
-    // Luna OS auto-logs in / has no LUKS prompt by default, but handle
-    // gracefully if persistence ever requires unlocking.
-}
-Plymouth.SetDisplayPasswordFunction(display_password_callback);

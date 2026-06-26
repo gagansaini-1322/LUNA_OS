@@ -1,6 +1,6 @@
 [Plymouth Theme]
 Name=Luna OS
-Description=Dark/neon gaming boot splash for Luna OS
+Description=Luna OS Boot Animation
 ModuleName=script
 
 [script]

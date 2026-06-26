@@ -26,6 +26,7 @@ jobs:
       - name: Configure and build Luna OS ISO
         run: |
           cd LUNA-os
+          sudo lb clean --all
           sudo bash auto/config
           sudo lb build 2>&1 | tee build.log
         env:

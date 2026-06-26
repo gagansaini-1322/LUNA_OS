@@ -19,10 +19,10 @@ LB_INTERACTIVE="false"
 LB_KEYRING_PACKAGES="debian-archive-keyring"
 
 # Set kernel flavour to use (with arch)
-LB_LINUX_FLAVOURS_WITH_ARCH=""
+LB_LINUX_FLAVOURS_WITH_ARCH="rt-amd64"
 
 # Set kernel packages to use
-LB_LINUX_PACKAGES="linux-image-rt-amd64"
+LB_LINUX_PACKAGES="linux-image"
 
 # Enable security updates
 LB_SECURITY="false"

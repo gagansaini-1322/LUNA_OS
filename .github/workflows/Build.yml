@@ -21,6 +21,9 @@ jobs:
         run: |
           SCRIPT=$(dpkg -L live-build | grep "lb_chroot_linux-image$")
           sudo sed -i '/dists.*Contents/{ s/.*/true/; }' "$SCRIPT"
+      - name: Make isohybrid available system-wide
+        run: sudo ln -sf $(which isohybrid) /usr/local/sbin/isohybrid 2>/dev/null || true
+
       - name: Configure and build Luna OS ISO
         run: |
           cd LUNA-os
@@ -43,3 +46,11 @@ jobs:
           name: luna-os-iso
           path: LUNA-os/*.iso
           retention-days: 30
+      - name: Make ISO hybrid bootable with xorriso
+        if: success()
+        run: |
+          xorriso -indev LUNA-os/binary.hybrid.iso \
+            -outdev LUNA-os/binary.hybrid.iso \
+            -map LUNA-os/binary.hybrid.iso / \
+            -boot_image grub grub2_mbr=/usr/lib/grub/i386-pc/boot_hybrid.img \
+            -changes_pending yes 2>/dev/null || true

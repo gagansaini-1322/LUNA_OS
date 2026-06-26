@@ -1,7 +1,7 @@
 # config/binary - options for live-build(7), binary stage
 
 # Set image type
-LB_IMAGE_TYPE="iso-hybrid"
+LB_IMAGE_TYPE="iso"
 
 # Set image filesystem
 LB_BINARY_FILESYSTEM="fat32"
@@ -19,13 +19,13 @@ LB_BOOTAPPEND_INSTALL=""
 LB_BOOTAPPEND_LIVE_FAILSAFE="boot=live components memtest noapic noapm nodma nomce nolapic nosmp nosplash vga=788"
 
 # Set BIOS bootloader
-LB_BOOTLOADER_BIOS="grub-pc"
+LB_BOOTLOADER_BIOS="grub2"
 
 # Set EFI bootloader
-LB_BOOTLOADER_EFI="grub-efi"
+LB_BOOTLOADER_EFI=""
 
 # Set bootloaders
-LB_BOOTLOADERS="grub-pc grub-efi"
+LB_BOOTLOADERS="grub2"
 
 # Set checksums
 LB_CHECKSUMS="sha256"

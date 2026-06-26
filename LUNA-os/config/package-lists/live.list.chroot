@@ -2,6 +2,5 @@
 # config/package-lists/live.list.chroot
 
 live-tools
-syslinux-efi
 grub-efi-amd64-bin
 grub-pc-bin

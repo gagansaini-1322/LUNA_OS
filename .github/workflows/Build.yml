@@ -40,18 +40,7 @@ jobs:
         env:
           DEBIAN_FRONTEND: noninteractive
 
-      - name: Make ISO bootable with xorriso
-        if: success()
-        run: |
-          ISO=$(find LUNA-os -name "*.iso" | head -1)
-          sudo xorriso -indev "$ISO" -outdev "$ISO.new" \
-            -boot_image grub grub2_mbr=/usr/lib/grub/i386-pc/boot_hybrid.img \
-            -boot_image any next \
-            -boot_image any partition_table=on \
-            -changes_pending yes \
-            -commit
-          mv "$ISO.new" "$ISO"
-          xxd "$ISO" | head -3
+
 
       - name: Upload build log
         if: always()

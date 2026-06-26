@@ -23,6 +23,15 @@ jobs:
           sudo apt-get install -y --no-install-recommends \
             live-build xorriso isolinux syslinux-common
 
+      - name: Patch lb_chroot_linux-image to skip Contents fetch
+        run: |
+          SCRIPT=$(dpkg -L live-build | grep "lb_chroot_linux-image$")
+          echo "Patching: $SCRIPT"
+          sudo sed -i 's|wget.*Contents-amd64.gz.*||g' "$SCRIPT"
+          sudo sed -i 's|gzip -d.*Contents-amd64.gz.*||g' "$SCRIPT"
+          # Replace the whole Contents-fetching block with a no-op
+          sudo sed -i '/Contents-amd64/d' "$SCRIPT"
+
       - name: Configure and build Luna OS ISO
         run: |
           cd LUNA-os

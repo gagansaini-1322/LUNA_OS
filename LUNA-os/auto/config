@@ -29,3 +29,7 @@ lb config noauto \
     --apt-source-archives false \
     --cache-packages false \
     "${@}"
+
+# Override generated chroot config to prevent bad kernel package name
+echo 'LB_LINUX_FLAVOURS_WITH_ARCH=""' >> config/chroot
+echo 'LB_LINUX_PACKAGES=""' >> config/chroot

@@ -22,10 +22,9 @@ jobs:
       - name: Patch grub-mkimage in lb_binary_iso
         run: |
           sudo sed -i "s|grub-mkimage -d|grub-mkimage -p /boot/grub -d|g" /usr/lib/live/build/lb_binary_iso
-          echo "Patched line:"
           grep -n grub-mkimage /usr/lib/live/build/lb_binary_iso
-          echo "Full grub section:"
-          grep -n -A2 -B2 grub-mkimage /usr/lib/live/build/lb_binary_iso
+          # Also keep grub-pc installed during binary stage so modules are available
+          sudo sed -i "/Remove_package/i cp -r chroot/usr/lib/grub/i386-pc binary/boot/grub/ 2>/dev/null || true" /usr/lib/live/build/lb_binary_grub2
 
       - name: Patch lb_chroot_linux-image
         run: |

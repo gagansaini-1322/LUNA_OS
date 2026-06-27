@@ -21,8 +21,11 @@ jobs:
 
       - name: Patch grub-mkimage in lb_binary_iso
         run: |
-          sudo sed -i "s|grub-mkimage -d \${input_dir}|grub-mkimage -p /boot/grub -d \${input_dir}|g" /usr/lib/live/build/lb_binary_iso
+          sudo sed -i "s|grub-mkimage -d|grub-mkimage -p /boot/grub -d|g" /usr/lib/live/build/lb_binary_iso
+          echo "Patched line:"
           grep -n grub-mkimage /usr/lib/live/build/lb_binary_iso
+          echo "Full grub section:"
+          grep -n -A2 -B2 grub-mkimage /usr/lib/live/build/lb_binary_iso
 
       - name: Patch lb_chroot_linux-image
         run: |

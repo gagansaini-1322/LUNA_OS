@@ -21,8 +21,12 @@ jobs:
 
       - name: Patch grub-mkimage in lb_binary_iso
         run: |
-          sudo sed -i "172s|grub-mkimage -d|grub-mkimage -p /boot/grub -d|" /usr/lib/live/build/lb_binary_iso
-          grep -n grub-mkimage /usr/lib/live/build/lb_binary_iso
+          echo "live-build version:"
+          dpkg -l live-build | tail -1
+          echo "lb_binary_iso grub lines:"
+          grep -n "grub-mkimage\|eltorito\|core.img" /usr/lib/live/build/lb_binary_iso || true
+          echo "lb_binary_grub2 bootloader check:"
+          head -30 /usr/lib/live/build/lb_binary_grub2
 
       - name: Patch lb_chroot_linux-image
         run: |

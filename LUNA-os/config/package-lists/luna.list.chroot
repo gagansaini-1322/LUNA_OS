@@ -68,3 +68,9 @@ bluez
 blueman
 pulseaudio-module-bluetooth
 zenity
+python3-flask
+python3-psutil
+python3-gi
+gir1.2-webkit2-4.1
+power-profiles-daemon
+lm-sensors

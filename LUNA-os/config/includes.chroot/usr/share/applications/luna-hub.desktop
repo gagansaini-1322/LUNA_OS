@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Luna Hub
+Exec=python3 /opt/luna-hub/launcher.py
+Icon=luna-hub
+Categories=System;

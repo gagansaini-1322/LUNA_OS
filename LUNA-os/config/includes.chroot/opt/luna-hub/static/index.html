@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Luna Hub</title>
+<style>
+  body { background:#10131a; color:#e8eaf0; font-family:sans-serif; padding:20px; }
+  .card { background:#1b1f2a; border-radius:12px; padding:16px; margin-bottom:14px; }
+  .label { color:#8b93a7; font-size:13px; }
+  .value { font-size:22px; font-weight:600; }
+  button { background:#2a3142; color:#fff; border:none; padding:10px 16px; border-radius:8px; margin-right:8px; cursor:pointer; }
+  button.active { background:#5b8cff; }
+</style>
+</head>
+<body>
+  <h2>Luna Hub</h2>
+  <div class="card"><div class="label">CPU</div><div class="value" id="cpu">--%</div></div>
+  <div class="card"><div class="label">RAM</div><div class="value" id="ram">--%</div></div>
+  <div class="card"><div class="label">CPU Temp</div><div class="value" id="temp">-- °C</div></div>
+  <div class="card"><div class="label">Fan</div><div class="value" id="fan">-- RPM</div></div>
+  <div class="card"><div class="label">Battery</div><div class="value" id="batt">--%</div></div>
+  <div class="card">
+    <div class="label">Performance Mode</div>
+    <button id="btn-performance" onclick="setMode('performance')">Performance</button>
+    <button id="btn-balanced" onclick="setMode('balanced')">Balanced</button>
+    <button id="btn-power-saver" onclick="setMode('power-saver')">Power Saver</button>
+  </div>
+<script>
+async function refresh() {
+  const r = await fetch('/api/stats').then(r => r.json());
+  document.getElementById('cpu').innerText = r.cpu_percent + '%';
+  document.getElementById('ram').innerText = r.ram_percent + '% (' + r.ram_used_gb + '/' + r.ram_total_gb + ' GB)';
+  document.getElementById('temp').innerText = r.cpu_temp ? r.cpu_temp + ' °C' : 'N/A';
+  document.getElementById('fan').innerText = r.fan_rpm ? r.fan_rpm + ' RPM' : 'N/A (no driver)';
+  document.getElementById('batt').innerText = r.battery_percent != null ? r.battery_percent + '%' : 'N/A';
+  const m = await fetch('/api/perf-mode').then(r => r.json());
+  ['performance','balanced','power-saver'].forEach(mode => {
+    document.getElementById('btn-' + mode).classList.toggle('active', m.mode === mode);
+  });
+}
+async function setMode(mode) {
+  await fetch('/api/perf-mode/' + mode, { method: 'POST' });
+  refresh();
+}
+refresh();
+setInterval(refresh, 2000);
+</script>
+</body>
+</html>

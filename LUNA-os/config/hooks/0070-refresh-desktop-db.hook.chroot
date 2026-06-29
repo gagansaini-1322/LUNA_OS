@@ -1,0 +1,5 @@
+#!/bin/sh
+set -e
+echo "[luna-hook] Refreshing desktop database..."
+update-desktop-database /usr/share/applications 2>/dev/null || true
+echo "[luna-hook] Done."

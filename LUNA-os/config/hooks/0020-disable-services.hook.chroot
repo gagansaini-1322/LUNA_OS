@@ -8,7 +8,7 @@ set -e
 
 echo "[luna-hook] Disabling non-essential services..."
 
-for svc in bluetooth cups cups-browsed avahi-daemon ModemManager \
+for svc in cups cups-browsed avahi-daemon ModemManager \
            whoopsie apport saned colord; do
     systemctl disable "$svc" 2>/dev/null || true
     systemctl mask "$svc" 2>/dev/null || true
@@ -17,8 +17,6 @@ done
 echo "[luna-hook] Blacklisting non-gaming kernel modules..."
 cat > /etc/modprobe.d/luna-blacklist.conf <<'EOF'
 # Luna OS — modules disabled to save RAM/boot time, none needed for gaming
-blacklist btusb
-blacklist bluetooth
 blacklist usblp
 blacklist uvcvideo
 blacklist lirc_dev

@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=About Luna OS
+Exec=luna-about
+Icon=luna-logo
+Categories=System;

@@ -1,0 +1,2 @@
+#!/bin/sh
+zenity --info --title="About Luna OS" --width=400 --text="<b>Luna OS</b>\nLight. Fast. Limitless.\n\nVersion 1.0\n\nA minimal, elegant and performance focused operating system designed for productivity, creativity and control.\n\nhttps://github.com/gagansaini-1322/LUNA_OS"

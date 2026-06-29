@@ -1,0 +1,10 @@
+PRETTY_NAME="Luna OS"
+NAME="Luna OS"
+VERSION_ID="1.0"
+VERSION="1.0"
+VERSION_CODENAME=luna
+ID=debian
+ID_LIKE=debian
+HOME_URL="https://github.com/gagansaini-1322/LUNA_OS"
+SUPPORT_URL="https://github.com/gagansaini-1322/LUNA_OS"
+BUG_REPORT_URL="https://github.com/gagansaini-1322/LUNA_OS/issues"

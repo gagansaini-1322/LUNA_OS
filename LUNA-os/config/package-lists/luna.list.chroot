@@ -58,3 +58,12 @@ udev
 usbutils
 xserver-xorg-input-libinput
 user-setup
+firmware-iwlwifi
+firmware-realtek
+firmware-misc-nonfree
+firmware-linux-nonfree
+network-manager
+network-manager-gnome
+bluez
+blueman
+pulseaudio-module-bluetooth

@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=NetworkManager Applet
+Exec=nm-applet
+NoDisplay=true
+X-GNOME-Autostart-enabled=true

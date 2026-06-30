@@ -1,0 +1,5 @@
+#!/bin/sh
+set -e
+echo "[luna-hook] Refreshing icon cache..."
+gtk-update-icon-cache -f -t /usr/share/icons/hicolor 2>/dev/null || true
+echo "[luna-hook] Done."

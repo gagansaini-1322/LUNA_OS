@@ -1,0 +1,5 @@
+#!/bin/sh
+set -e
+echo "[luna-hook] Pre-creating empty custom_mounts.list to silence boot warning..."
+mkdir -p /etc/live
+touch /etc/live/custom_mounts.list 2>/dev/null || true

@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Luna Wallpaper Fix
+Exec=luna-fix-wallpaper
+NoDisplay=true
+X-GNOME-Autostart-enabled=true

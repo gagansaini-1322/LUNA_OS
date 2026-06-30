@@ -1,0 +1,5 @@
+#!/bin/sh
+sleep 2
+xfconf-query -c xfce4-desktop -p /backdrop/screen0 -lv 2>/dev/null | grep last-image | cut -d' ' -f1 | while read prop; do
+    xfconf-query -c xfce4-desktop -p "$prop" -s /usr/share/backgrounds/luna/default-idle.jpg
+done

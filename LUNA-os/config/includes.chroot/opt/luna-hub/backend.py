@@ -52,7 +52,7 @@ def stats():
     battery = psutil.sensors_battery()
     return jsonify({
         "cpu_percent": psutil.cpu_percent(interval=0.3),
-        "ram_percent": psutil.virtual_memory().percent,
+        "ram_percent": round(psutil.virtual_memory().used / psutil.virtual_memory().total * 100, 1),
         "ram_used_gb": round(psutil.virtual_memory().used / (1024**3), 1),
         "ram_total_gb": round(psutil.virtual_memory().total / (1024**3), 1),
         "cpu_temp": read_temps(),

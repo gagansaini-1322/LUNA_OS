@@ -26,6 +26,27 @@ def read_fan_rpm():
         return None
     return None
 
+
+def read_gpu():
+    try:
+        out = subprocess.check_output(
+            ["nvidia-smi", "--query-gpu=utilization.gpu,memory.used,memory.total,temperature.gpu",
+             "--format=csv,noheader,nounits"], text=True, timeout=2
+        ).strip().split(", ")
+        return {"vendor": "NVIDIA", "util": int(out[0]), "mem_used_mb": int(out[1]),
+                "mem_total_mb": int(out[2]), "temp": int(out[3])}
+    except Exception:
+        pass
+    try:
+        import glob
+        cards = glob.glob("/sys/class/drm/card*/device/gpu_busy_percent")
+        if cards:
+            util = int(open(cards[0]).read().strip())
+            return {"vendor": "AMD", "util": util, "mem_used_mb": None, "mem_total_mb": None, "temp": None}
+    except Exception:
+        pass
+    return {"vendor": None, "util": None, "mem_used_mb": None, "mem_total_mb": None, "temp": None}
+
 @app.route("/api/stats")
 def stats():
     battery = psutil.sensors_battery()
@@ -38,6 +59,7 @@ def stats():
         "fan_rpm": read_fan_rpm(),
         "battery_percent": battery.percent if battery else None,
         "battery_plugged": battery.power_plugged if battery else None,
+        "gpu": read_gpu(),
     })
 
 @app.route("/api/perf-mode/<mode>", methods=["POST"])

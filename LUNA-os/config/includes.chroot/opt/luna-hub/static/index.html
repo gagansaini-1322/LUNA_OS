@@ -4,35 +4,196 @@
 <meta charset="utf-8">
 <title>Luna Hub</title>
 <style>
-  body { background:#10131a; color:#e8eaf0; font-family:sans-serif; padding:20px; }
-  .card { background:#1b1f2a; border-radius:12px; padding:16px; margin-bottom:14px; }
-  .label { color:#8b93a7; font-size:13px; }
-  .value { font-size:22px; font-weight:600; }
-  button { background:#2a3142; color:#fff; border:none; padding:10px 16px; border-radius:8px; margin-right:8px; cursor:pointer; }
-  button.active { background:#5b8cff; }
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  * { box-sizing: border-box; }
+  body {
+    background: #0a0b10;
+    color: #e8eaf0;
+    font-family: 'Inter', sans-serif;
+    padding: 20px;
+    margin: 0;
+  }
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .header h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    background: linear-gradient(90deg, #6366F1, #A78BFA);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .card {
+    background: #12141c;
+    border: 1px solid #1f2230;
+    border-radius: 14px;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card.wide { grid-column: 1 / -1; }
+  .label {
+    color: #8b93a7;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .value {
+    font-size: 26px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .unit {
+    font-size: 13px;
+    color: #8b93a7;
+    font-weight: 400;
+  }
+  .bar-track {
+    width: 100%;
+    height: 6px;
+    background: #1f2230;
+    border-radius: 3px;
+    margin-top: 10px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, #6366F1, #A78BFA);
+    transition: width 0.4s ease;
+    box-shadow: 0 0 8px rgba(167,139,250,0.6);
+  }
+  .bar-fill.warn { background: linear-gradient(90deg, #f59e0b, #fbbf24); box-shadow: 0 0 8px rgba(251,191,36,0.6); }
+  .bar-fill.hot { background: linear-gradient(90deg, #ef4444, #f87171); box-shadow: 0 0 8px rgba(248,113,113,0.6); }
+  .perf-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  button {
+    flex: 1;
+    background: #1a1d28;
+    color: #c5cae0;
+    border: 1px solid #2a2e3f;
+    padding: 10px 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  button:hover { border-color: #6366F1; }
+  button.active {
+    background: linear-gradient(135deg, #6366F1, #A78BFA);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 0 12px rgba(99,102,241,0.5);
+  }
+  .gpu-vendor {
+    display: inline-block;
+    font-size: 11px;
+    color: #6366F1;
+    background: rgba(99,102,241,0.15);
+    padding: 2px 8px;
+    border-radius: 6px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
 </style>
 </head>
 <body>
-  <h2>Luna Hub</h2>
-  <div class="card"><div class="label">CPU</div><div class="value" id="cpu">--%</div></div>
-  <div class="card"><div class="label">RAM</div><div class="value" id="ram">--%</div></div>
-  <div class="card"><div class="label">CPU Temp</div><div class="value" id="temp">-- °C</div></div>
-  <div class="card"><div class="label">Fan</div><div class="value" id="fan">-- RPM</div></div>
-  <div class="card"><div class="label">Battery</div><div class="value" id="batt">--%</div></div>
-  <div class="card">
-    <div class="label">Performance Mode</div>
-    <button id="btn-performance" onclick="setMode('performance')">Performance</button>
-    <button id="btn-balanced" onclick="setMode('balanced')">Balanced</button>
-    <button id="btn-power-saver" onclick="setMode('power-saver')">Power Saver</button>
+  <div class="header">
+    <h2>Luna Hub</h2>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <div class="label">CPU</div>
+      <div class="value" id="cpu">--<span class="unit">%</span></div>
+      <div class="bar-track"><div class="bar-fill" id="cpu-bar" style="width:0%"></div></div>
+    </div>
+    <div class="card">
+      <div class="label">RAM</div>
+      <div class="value" id="ram">--<span class="unit">%</span></div>
+      <div class="bar-track"><div class="bar-fill" id="ram-bar" style="width:0%"></div></div>
+    </div>
+    <div class="card">
+      <div class="label">GPU<span class="gpu-vendor" id="gpu-vendor" style="display:none"></span></div>
+      <div class="value" id="gpu">--<span class="unit">%</span></div>
+      <div class="bar-track"><div class="bar-fill" id="gpu-bar" style="width:0%"></div></div>
+    </div>
+    <div class="card">
+      <div class="label">CPU Temp</div>
+      <div class="value" id="temp">--<span class="unit">°C</span></div>
+    </div>
+    <div class="card">
+      <div class="label">Fan</div>
+      <div class="value" id="fan">--<span class="unit">RPM</span></div>
+    </div>
+    <div class="card">
+      <div class="label">Battery</div>
+      <div class="value" id="batt">--<span class="unit">%</span></div>
+    </div>
+    <div class="card wide">
+      <div class="label">Performance mode</div>
+      <div class="perf-row">
+        <button id="btn-performance" onclick="setMode('performance')">Performance</button>
+        <button id="btn-balanced" onclick="setMode('balanced')">Balanced</button>
+        <button id="btn-power-saver" onclick="setMode('power-saver')">Power saver</button>
+      </div>
+    </div>
   </div>
 <script>
+function barClass(pct) {
+  if (pct >= 85) return 'hot';
+  if (pct >= 60) return 'warn';
+  return '';
+}
 async function refresh() {
   const r = await fetch('/api/stats').then(r => r.json());
-  document.getElementById('cpu').innerText = r.cpu_percent + '%';
-  document.getElementById('ram').innerText = r.ram_percent + '% (' + r.ram_used_gb + '/' + r.ram_total_gb + ' GB)';
-  document.getElementById('temp').innerText = r.cpu_temp ? r.cpu_temp + ' °C' : 'N/A';
-  document.getElementById('fan').innerText = r.fan_rpm ? r.fan_rpm + ' RPM' : 'N/A (no driver)';
-  document.getElementById('batt').innerText = r.battery_percent != null ? r.battery_percent + '%' : 'N/A';
+
+  document.getElementById('cpu').innerHTML = r.cpu_percent + '<span class="unit">%</span>';
+  const cpuBar = document.getElementById('cpu-bar');
+  cpuBar.style.width = r.cpu_percent + '%';
+  cpuBar.className = 'bar-fill ' + barClass(r.cpu_percent);
+
+  document.getElementById('ram').innerHTML = r.ram_percent + '<span class="unit">% &middot; ' + r.ram_used_gb + '/' + r.ram_total_gb + ' GB</span>';
+  const ramBar = document.getElementById('ram-bar');
+  ramBar.style.width = r.ram_percent + '%';
+  ramBar.className = 'bar-fill ' + barClass(r.ram_percent);
+
+  const gpu = r.gpu || {};
+  const gpuVendorEl = document.getElementById('gpu-vendor');
+  if (gpu.vendor) {
+    gpuVendorEl.style.display = 'inline-block';
+    gpuVendorEl.innerText = gpu.vendor;
+  } else {
+    gpuVendorEl.style.display = 'none';
+  }
+  if (gpu.util != null) {
+    document.getElementById('gpu').innerHTML = gpu.util + '<span class="unit">%</span>';
+    const gpuBar = document.getElementById('gpu-bar');
+    gpuBar.style.width = gpu.util + '%';
+    gpuBar.className = 'bar-fill ' + barClass(gpu.util);
+  } else {
+    document.getElementById('gpu').innerHTML = 'N/A<span class="unit"> no GPU detected</span>';
+    document.getElementById('gpu-bar').style.width = '0%';
+  }
+
+  document.getElementById('temp').innerHTML = r.cpu_temp ? Math.round(r.cpu_temp) + '<span class="unit">°C</span>' : 'N/A';
+  document.getElementById('fan').innerHTML = r.fan_rpm ? r.fan_rpm + '<span class="unit">RPM</span>' : 'N/A';
+  document.getElementById('batt').innerHTML = r.battery_percent != null ? r.battery_percent + '<span class="unit">%</span>' : 'N/A';
+
   const m = await fetch('/api/perf-mode').then(r => r.json());
   ['performance','balanced','power-saver'].forEach(mode => {
     document.getElementById('btn-' + mode).classList.toggle('active', m.mode === mode);

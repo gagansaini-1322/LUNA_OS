@@ -12,7 +12,7 @@ lb config noauto \
     --mirror-binary-security "http://deb.debian.org/debian-security" \
     --security false \
     --bootloader "grub2" \
-    --bootappend-live "boot=live components persistence splash quiet" \
+    --bootappend-live "boot=live components persistence splash quiet live-config.user-fullname=Luna" \
     --iso-application "Luna OS" \
     --iso-publisher "Luna OS Project" \
     --iso-volume "LUNA-OS" \
